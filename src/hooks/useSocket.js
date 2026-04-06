@@ -11,11 +11,13 @@ export function useSocket(userId, chatId) {
 
 		let joinRooms;
 		try {
+			// Singleton socket create panna initSocket use panrom.
 			const socket = initSocket();
 			if (!socket) {
 				return;
 			}
 			joinRooms = () => {
+				// User room join pannitu, selected chat irundha adhayum join panrom.
 				socket.emit("join");
 				if (chatId) {
 					socket.emit("joinChat", chatId);
@@ -34,6 +36,7 @@ export function useSocket(userId, chatId) {
 				return;
 			}
 			if (joinRooms) {
+				// Connect retry listeners remove pannitu duplicate join avoid panrom.
 				socket.off("connect", joinRooms);
 			}
 			// Keep socket alive for other hooks

@@ -99,8 +99,10 @@ export default function ProfilePage() {
 		}
 	}, [hasSession, isHydrated, router]);
 
+	// Session user id ready aana apram profile query run aagum.
 	const { data: profile, isLoading: profileLoading } = useQuery({
 		queryKey: ["profile", sessionUserId],
+		// Own profile fetch panna same API use panrom.
 		queryFn: getMyProfile,
 		enabled: isHydrated && hasSession,
 		retry: 1,
@@ -149,6 +151,7 @@ export default function ProfilePage() {
 		setSaveState({ loading: true, error: null, success: false });
 
 		try {
+			// Profile save complete aana ui state update pannrom; refetch later API handle pannum.
 			await updateMyProfile({
 				name: editedName,
 				about: editedAbout,

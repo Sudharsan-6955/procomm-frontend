@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import ChatList from "@/components/sidebar/ChatList";
 import ChatWindow from "@/components/chat/ChatWindow";
@@ -17,7 +17,8 @@ import { auth } from "@/lib/firebase";
 import { disconnectSocket } from "@/lib/socket";
 import { signOut } from "firebase/auth";
 
-export default function ChatPage() {
+function ChatPageContent() {
+	// TanStack query client use pannitu chats/cache refresh pannrom.
 	const queryClient = useQueryClient();
 	const router = useRouter();
 	const searchParams = useSearchParams();
@@ -27,6 +28,7 @@ export default function ChatPage() {
 	const [mobileView, setMobileView] = useState(initialChatId ? "chat" : "list");
 	const { data: me, isLoading: isLoadingMe } = useCurrentUser();
 	const presenceByUserId = usePresence(me?._id);
+	// User irundha dhaan socket init aagum; illena extra connect avoid pannidum.
 	const socket = useSocket(me?._id, selectedChatId);
 	const { data: chats = [], isLoading: isChatsLoading } = useChats();
 	const unreadByChat = useUnreadCounts(me?._id, chats);
@@ -78,6 +80,7 @@ export default function ChatPage() {
 
 		const direct = await createDirectChat(profiles[0]._id);
 		if (direct?._id) {
+			// Puthu chat create aana udane chats list refresh aaga cache invalidate panrom.
 			await queryClient.invalidateQueries({ queryKey: ["chats"] });
 			setSelectedChatInitialUnreadCount(0);
 			setSelectedChatId(String(direct._id));
@@ -92,6 +95,7 @@ export default function ChatPage() {
 
 		const direct = await createDirectChat(targetUserId);
 		if (direct?._id) {
+			// Same flow: new direct chat வந்தா cached chats refetch aaganum.
 			await queryClient.invalidateQueries({ queryKey: ["chats"] });
 			setSelectedChatInitialUnreadCount(0);
 			setSelectedChatId(String(direct._id));
@@ -104,6 +108,7 @@ export default function ChatPage() {
 			return;
 		}
 
+		// Chat open aana udane unread/read sync panna socket emit panrom.
 		socket.emit("chat:markRead", String(chatId));
 	};
 
@@ -127,7 +132,9 @@ export default function ChatPage() {
 			// Phone-login sessions may not have Firebase auth state.
 			console.warn("Firebase logout skipped:", error?.message || error);
 		} finally {
+			// Logout time la socket cleanup pannitu app state clear panrom.
 			disconnectSocket();
+			// Query cache full ah clear pannina stale chats/messages thirumba varadhu.
 			queryClient.clear();
 			clearSession();
 			router.push("/auth/login");
@@ -202,5 +209,17 @@ export default function ChatPage() {
 				</div>
 			</div>
 		</main>
+	);
+}
+
+function ChatPageFallback() {
+	return <main className="grid h-screen place-items-center bg-[#efeae2]">Loading chat...</main>;
+}
+
+export default function ChatPage() {
+	return (
+		<Suspense fallback={<ChatPageFallback />}>
+			<ChatPageContent />
+		</Suspense>
 	);
 }

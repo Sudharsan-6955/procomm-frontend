@@ -8,6 +8,7 @@ export function useUnreadCounts(userId, chats = []) {
 	const [unreadByChat, setUnreadByChat] = useState({});
 	const socket = useSocket(userId, null);
 	const mounted = useRef(false);
+	// TanStack cache la chats list update panna query client use panrom.
 	const queryClient = useQueryClient();
 
 	// Initialize unread counts from chats data (which now includes unreadCount from server)
@@ -38,6 +39,7 @@ export function useUnreadCounts(userId, chats = []) {
 			const userIdStr = String(userId);
 			const previewText = String(msg?.text || "").trim() || "New message";
 
+			// New message வந்தா chats cache top la move pannitu preview refresh panrom.
 			queryClient.setQueryData(["chats"], (old = []) => {
 				const list = Array.isArray(old) ? old : [];
 				const index = list.findIndex((chat) => String(chat._id) === chatId);
@@ -74,6 +76,7 @@ export function useUnreadCounts(userId, chats = []) {
 			const userIdStr = String(userId);
 			const previewText = String(msg?.text || "").trim() || "Message updated";
 
+			// Updated message kaaga chats preview and timestamp sync panrom.
 			queryClient.setQueryData(["chats"], (old = []) => {
 				const list = Array.isArray(old) ? old : [];
 				const index = list.findIndex((chat) => String(chat._id) === chatId);
@@ -118,11 +121,13 @@ export function useUnreadCounts(userId, chats = []) {
 			}));
 		};
 
+		// Message socket events listen pannitu unread badge live update pannrom.
 		socket.on("message:new", handleMessageNew);
 		socket.on("message:updated", handleMessageUpdated);
 		socket.on("chat:messagesRead", handleMessagesRead);
 
 		return () => {
+			// Cleanup la listener off panna duplicate count updates varadhu.
 			socket.off("message:new", handleMessageNew);
 			socket.off("message:updated", handleMessageUpdated);
 			socket.off("chat:messagesRead", handleMessagesRead);

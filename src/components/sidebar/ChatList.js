@@ -93,8 +93,10 @@ export default function ChatList({
 	const [showMenu, setShowMenu] = useState(false);
 	const [mobileTab, setMobileTab] = useState("chats");
 
+	// Sidebar contacts list ku separate TanStack cache use panrom.
 	const { data: usersData, isLoading: isUsersLoading } = useQuery({
 		queryKey: ["sidebar-users"],
+		// Pagination fixed-ah vechu contacts fetch panrom.
 		queryFn: () => getAllUsers(30, 0),
 		retry: 1,
 	});

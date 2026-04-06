@@ -38,9 +38,11 @@ function dedupeMessagesById(messages = []) {
 }
 
 export function useMessages(chatId, currentUserId, socket) {
+	// TanStack query client la messages cache manage pannitu optimistic update panrom.
 	const queryClient = useQueryClient();
 	const queryKey = ["messages", chatId];
 
+	// Chat select aana server-la irundhu messages fetch panrom.
 	const messagesQuery = useQuery({
 		queryKey,
 		queryFn: async () => {
@@ -69,6 +71,7 @@ export function useMessages(chatId, currentUserId, socket) {
 				return {};
 			}
 
+			// Existing fetch cancel pannitu optimistic message add panrom.
 			await queryClient.cancelQueries({ queryKey });
 
 			const tempId = `temp-${Date.now()}-${Math.random().toString(16).slice(2)}`;
@@ -85,6 +88,7 @@ export function useMessages(chatId, currentUserId, socket) {
 
 			queryClient.setQueryData(queryKey, (old = []) => [...old, optimistic]);
 
+			// Chats list preview-kum immediately latest text reflect aaganum.
 			queryClient.setQueryData(["chats"], (old = []) => {
 				const list = Array.isArray(old) ? old : [];
 				const index = list.findIndex((chat) => String(chat._id) === String(chatId));
@@ -138,6 +142,7 @@ export function useMessages(chatId, currentUserId, socket) {
 				return;
 			}
 
+			// Server state confirm aaga messages and chats both refetch panrom.
 			await queryClient.invalidateQueries({ queryKey });
 			await queryClient.invalidateQueries({ queryKey: ["chats"] });
 		},
@@ -152,6 +157,7 @@ export function useMessages(chatId, currentUserId, socket) {
 			return editMessageApi(chatId, messageId, { text });
 		},
 		onSuccess: (updated) => {
+			// Edit result வந்ததும் local cache full sync.
 			queryClient.setQueryData(queryKey, (old = []) =>
 				old.map((msg) =>
 					String(msg._id) === String(updated._id)
@@ -161,6 +167,7 @@ export function useMessages(chatId, currentUserId, socket) {
 			);
 		},
 		onSettled: async () => {
+			// Chat preview message fresh-ah varanum.
 			await queryClient.invalidateQueries({ queryKey: ["chats"] });
 		},
 	});
@@ -177,6 +184,7 @@ export function useMessages(chatId, currentUserId, socket) {
 			return toggleFavoriteMessage(chatId, messageId);
 		},
 		onMutate: async (messageId) => {
+			// Toggle start aaga munnadi existing cache cancel pannrom.
 			await queryClient.cancelQueries({ queryKey });
 			const previous = queryClient.getQueryData(queryKey);
 
@@ -191,6 +199,7 @@ export function useMessages(chatId, currentUserId, socket) {
 			return { previous };
 		},
 		onSuccess: (updated) => {
+				// Favorite status server result oda replace panrom.
 			queryClient.setQueryData(queryKey, (old = []) =>
 				old.map((msg) =>
 					String(msg._id) === String(updated._id)
@@ -205,6 +214,7 @@ export function useMessages(chatId, currentUserId, socket) {
 			}
 		},
 		onSettled: async () => {
+			// Query refetch pannina final truth கிடைக்கும்.
 			await queryClient.invalidateQueries({ queryKey });
 		},
 	});
@@ -221,6 +231,7 @@ export function useMessages(chatId, currentUserId, socket) {
 			return togglePinMessage(chatId, messageId);
 		},
 		onMutate: async (messageId) => {
+			// Pin toggle kku old query pause pannitu optimistic update panrom.
 			await queryClient.cancelQueries({ queryKey });
 			const previous = queryClient.getQueryData(queryKey);
 
@@ -235,6 +246,7 @@ export function useMessages(chatId, currentUserId, socket) {
 			return { previous };
 		},
 		onSuccess: (updated) => {
+				// Server response vandha pin status cache la sync aagum.
 			queryClient.setQueryData(queryKey, (old = []) =>
 				old.map((msg) =>
 					String(msg._id) === String(updated._id)
@@ -249,6 +261,7 @@ export function useMessages(chatId, currentUserId, socket) {
 			}
 		},
 		onSettled: async () => {
+			// One final refetch for stable cache state.
 			await queryClient.invalidateQueries({ queryKey });
 		},
 	});
@@ -266,12 +279,14 @@ export function useMessages(chatId, currentUserId, socket) {
 		},
 		onSuccess: (result, variables) => {
 			if (result?.removed) {
+				// Message delete aana full removal cache-la reflect panrom.
 				queryClient.setQueryData(queryKey, (old = []) =>
 					old.filter((msg) => String(msg._id) !== String(variables.messageId))
 				);
 				return;
 			}
 
+			// Soft delete / partial update cases ku cache replace panrom.
 			queryClient.setQueryData(queryKey, (old = []) =>
 				old.map((msg) =>
 					String(msg._id) === String(result._id)
@@ -281,6 +296,7 @@ export function useMessages(chatId, currentUserId, socket) {
 			);
 		},
 		onSettled: async () => {
+			// Chats list preview/date update aaga refresh panrom.
 			await queryClient.invalidateQueries({ queryKey: ["chats"] });
 		},
 	});
@@ -296,6 +312,7 @@ export function useMessages(chatId, currentUserId, socket) {
 				return;
 			}
 
+			// Real-time message வந்ததும் current chat cache update panrom.
 			queryClient.setQueryData(queryKey, (old = []) => {
 				const list = Array.isArray(old) ? old : [];
 				const normalizedIncoming = {
@@ -313,6 +330,7 @@ export function useMessages(chatId, currentUserId, socket) {
 				return;
 			}
 
+			// Edited message same chat-la irundha local list la replace panrom.
 			queryClient.setQueryData(queryKey, (old = []) =>
 				old.map((item) =>
 					String(item._id) === String(msg._id)
@@ -335,6 +353,7 @@ export function useMessages(chatId, currentUserId, socket) {
 				return;
 			}
 
+			// Remove event வந்தா message cache-la irundhu delete panrom.
 			queryClient.setQueryData(queryKey, (old = []) =>
 				old.filter((item) => String(item._id) !== String(event.messageId))
 			);
@@ -345,6 +364,7 @@ export function useMessages(chatId, currentUserId, socket) {
 		socket.on("message:removed", handleRemovedMessage);
 
 		return () => {
+			// Listener cleanup important, illana duplicate message updates varum.
 			socket.off("message:new", handleNewMessage);
 			socket.off("message:updated", handleUpdatedMessage);
 			socket.off("message:removed", handleRemovedMessage);

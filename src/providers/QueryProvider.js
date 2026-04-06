@@ -9,6 +9,7 @@ export default function QueryProvider({ children }) {
 			new QueryClient({
 				defaultOptions: {
 					queries: {
+						// Window focus-la auto refetch avoid pannitu chat UX stable-ah vechirkom.
 						refetchOnWindowFocus: false,
 					},
 				},
