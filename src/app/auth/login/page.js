@@ -423,7 +423,7 @@ export default function LoginPage() {
 				<div className="mx-auto w-full max-w-xl text-center">
 					{step === "method" && (
 						<>
-							<h1 className="text-4xl tracking-tight">Login to WhatsApp Web</h1>
+							<h1 className="text-4xl tracking-tight">Login to Procomm Web</h1>
 							<p className="mt-3 text-sm text-[#111b21]/90">Choose how you want to log in</p>
 
 							<div className="mt-9 flex flex-col space-y-3">

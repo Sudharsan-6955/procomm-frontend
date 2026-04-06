@@ -420,7 +420,7 @@ export default function ChatWindow({
 		return (
 			<section className="grid h-full flex-1 place-items-center bg-[#f0efe8] px-6 text-center">
 				<div>
-					<h2 className="text-xl font-semibold text-[#111b21]">WhatsApp Web Style Workspace</h2>
+					<h2 className="text-xl font-semibold text-[#111b21]">Procomm Web Style Workspace</h2>
 					<p className="mt-2 text-sm text-[#667781]">Pick a conversation from the left panel to start messaging.</p>
 					{onBackToList && (
 						<button
