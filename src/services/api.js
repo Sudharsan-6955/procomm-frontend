@@ -1,7 +1,7 @@
 import { getSessionToken } from "@/lib/session";
-import { getApiBaseUrl } from "@/lib/apiBaseUrl";
 
-const API_BASE_URL = getApiBaseUrl();
+const API_BASE_URL =
+	process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
 
 async function request(path, options = {}) {
 	const token = getSessionToken();

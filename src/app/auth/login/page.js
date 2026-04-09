@@ -13,7 +13,6 @@ import {
 	verifyOtp,
 } from "@/lib/phoneAuth";
 import { auth } from "@/lib/firebase";
-import { getApiBaseUrl } from "@/lib/apiBaseUrl";
 import { saveSession } from "@/lib/session";
 import { getMyProfile, sendEmailOtp, verifyEmailOtp as verifyEmailOtpApi, verifyFirebaseLogin } from "@/services/api";
 
@@ -38,7 +37,14 @@ export default function LoginPage() {
 	const [isVerifyingEmailOtp, setIsVerifyingEmailOtp] = useState(false);
 	const otpInputRefs = useRef([]);
 	const emailOtpInputRefs = useRef([]);
-	const apiBaseUrl = getApiBaseUrl();
+	const phoneVerifyInFlightRef = useRef(false);
+	const emailVerifyInFlightRef = useRef(false);
+	const lastAutoVerifiedPhoneCodeRef = useRef("");
+	const lastAutoVerifiedEmailCodeRef = useRef("");
+	const apiBaseUrl =
+		process.env.NEXT_PUBLIC_API_URL ||
+		process.env.NEXT_PUBLIC_API_BASE_URL ||
+		"http://localhost:5000";
 
 	useEffect(() => {
 		return () => {
@@ -212,7 +218,7 @@ export default function LoginPage() {
 	};
 
 	const handleVerifyEmailOtp = useCallback(async () => {
-		if (isVerifyingEmailOtp) {
+		if (isVerifyingEmailOtp || emailVerifyInFlightRef.current) {
 			return;
 		}
 
@@ -226,6 +232,7 @@ export default function LoginPage() {
 			return;
 		}
 
+		emailVerifyInFlightRef.current = true;
 		setIsVerifyingEmailOtp(true);
 		setStatusMessage("info", "Verifying email OTP...");
 
@@ -240,6 +247,7 @@ export default function LoginPage() {
 		} catch (error) {
 			setStatusMessage("error", error.message || "Email OTP verification failed.");
 		} finally {
+			emailVerifyInFlightRef.current = false;
 			setIsVerifyingEmailOtp(false);
 		}
 	}, [emailOtpCode, emailOtpValid, emailName, emailValid, isVerifyingEmailOtp, email, router]);
@@ -301,7 +309,7 @@ export default function LoginPage() {
 	};
 
 	const handleVerify = useCallback(async () => {
-		if (isVerifying) {
+		if (isVerifying || phoneVerifyInFlightRef.current) {
 			return;
 		}
 
@@ -315,6 +323,7 @@ export default function LoginPage() {
 			return;
 		}
 
+		phoneVerifyInFlightRef.current = true;
 		setIsVerifying(true);
 		setStatusMessage("info", "Verifying OTP...");
 
@@ -333,6 +342,7 @@ export default function LoginPage() {
 		} catch (error) {
 			setStatusMessage("error", getFriendlyPhoneAuthError(error));
 		} finally {
+			phoneVerifyInFlightRef.current = false;
 			setIsVerifying(false);
 		}
 	}, [confirmationResult, isVerifying, otpCode, otpValid, router]);
@@ -352,8 +362,14 @@ export default function LoginPage() {
 			return;
 		}
 
+		if (lastAutoVerifiedPhoneCodeRef.current === otpCode) {
+			return;
+		}
+
+		lastAutoVerifiedPhoneCodeRef.current = otpCode;
+
 		handleVerify();
-	}, [step, otpValid, isVerifying, confirmationResult, handleVerify]);
+	}, [step, otpValid, isVerifying, confirmationResult, handleVerify, otpCode]);
 
 		useEffect(() => {
 			if (step !== "emailOtp") {
@@ -370,12 +386,19 @@ export default function LoginPage() {
 				return;
 			}
 
+			if (lastAutoVerifiedEmailCodeRef.current === emailOtpCode) {
+				return;
+			}
+
+			lastAutoVerifiedEmailCodeRef.current = emailOtpCode;
+
 			handleVerifyEmailOtp();
-		}, [step, emailOtpValid, isVerifyingEmailOtp, handleVerifyEmailOtp]);
+		}, [step, emailOtpValid, isVerifyingEmailOtp, handleVerifyEmailOtp, emailOtpCode]);
 
 	const handleEditNumber = () => {
 		setStep("phone");
 		setOtp(Array.from({ length: otpLength }, () => ""));
+		lastAutoVerifiedPhoneCodeRef.current = "";
 		setConfirmationResult(null);
 		setStatusMessage("", "");
 	};
@@ -383,6 +406,7 @@ export default function LoginPage() {
 	const handleEditEmail = () => {
 		setStep("email");
 		setEmailOtp(Array.from({ length: otpLength }, () => ""));
+		lastAutoVerifiedEmailCodeRef.current = "";
 		setStatusMessage("", "");
 	};
 
@@ -395,6 +419,7 @@ export default function LoginPage() {
 		clearRecaptcha();
 		setIsResending(true);
 		setOtp(Array.from({ length: otpLength }, () => ""));
+		lastAutoVerifiedPhoneCodeRef.current = "";
 		setStatusMessage("info", `Resending code to ${fullPhoneNumber}...`);
 
 		try {
