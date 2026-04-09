@@ -13,6 +13,7 @@ import {
 	verifyOtp,
 } from "@/lib/phoneAuth";
 import { auth } from "@/lib/firebase";
+import { getApiBaseUrl } from "@/lib/apiBaseUrl";
 import { saveSession } from "@/lib/session";
 import { getMyProfile, sendEmailOtp, verifyEmailOtp as verifyEmailOtpApi, verifyFirebaseLogin } from "@/services/api";
 
@@ -37,10 +38,7 @@ export default function LoginPage() {
 	const [isVerifyingEmailOtp, setIsVerifyingEmailOtp] = useState(false);
 	const otpInputRefs = useRef([]);
 	const emailOtpInputRefs = useRef([]);
-	const apiBaseUrl =
-		process.env.NEXT_PUBLIC_API_URL ||
-		process.env.NEXT_PUBLIC_API_BASE_URL ||
-		"http://localhost:5000";
+	const apiBaseUrl = getApiBaseUrl();
 
 	useEffect(() => {
 		return () => {

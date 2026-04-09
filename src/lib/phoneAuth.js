@@ -1,5 +1,6 @@
 import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
 import { auth } from "@/lib/firebase";
+import { getApiBaseUrl } from "@/lib/apiBaseUrl";
 
 let recaptchaVerifier = null;
 
@@ -74,10 +75,7 @@ export const verifyOtp = async (confirmationResult, otpCode) => {
 
 export const sendIdTokenToBackend = async (idToken, userProfile = {}, options = {}) => {
 	const { timeoutMs = 20000 } = options;
-	const baseUrl =
-		process.env.NEXT_PUBLIC_API_URL ||
-		process.env.NEXT_PUBLIC_API_BASE_URL ||
-		"http://localhost:5000";
+	const baseUrl = getApiBaseUrl();
 	const endpoint = process.env.NEXT_PUBLIC_AUTH_VERIFY_ENDPOINT || `${baseUrl}/api/auth/firebase-phone`;
 	const controller = new AbortController();
 	const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
