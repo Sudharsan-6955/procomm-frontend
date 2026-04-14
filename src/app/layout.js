@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import QueryProvider from "@/providers/QueryProvider";
@@ -26,7 +27,9 @@ export default function RootLayout({ children }) {
     >
       <body className="min-h-full flex flex-col">
         <QueryProvider>
-          <PushProvider>{children}</PushProvider>
+          <Suspense fallback={null}>
+            <PushProvider>{children}</PushProvider>
+          </Suspense>
         </QueryProvider>
       </body>
     </html>
