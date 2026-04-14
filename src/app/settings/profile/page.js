@@ -238,8 +238,8 @@ export default function ProfilePage() {
 	return (
 		<>
 			<main className="fixed inset-0 bg-gray-200/90 backdrop-blur-sm overflow-y-auto">
-				<div className="flex min-h-screen items-center justify-center p-4">
-					<div className="w-full max-w-2xl rounded-3xl border border-white/30 bg-white/98 backdrop-blur-xl shadow-2xl p-8 animate-in fade-in zoom-in-95 duration-300">
+				<div className="flex min-h-screen items-center justify-center p-2 sm:p-4">
+					<div className="w-full max-w-2xl rounded-2xl sm:rounded-3xl border border-white/30 bg-white/98 backdrop-blur-xl shadow-2xl p-5 sm:p-8 animate-in fade-in zoom-in-95 duration-300">
 					{profileLoading ? (
 						<div className="flex items-center justify-center py-12">
 							<div className="h-8 w-8 animate-spin rounded-full border-4 border-[#00a884] border-t-transparent" />
@@ -249,29 +249,29 @@ export default function ProfilePage() {
 							<button
 								type="button"
 								onClick={() => router.back()}
-								className={`mb-6 flex items-center gap-2 rounded-full bg-gray-100 p-2 hover:bg-gray-200 transition ${editMode ? "absolute top-4 left-4 p-1.5" : ""}`}
+								className={`mb-4 sm:mb-6 flex items-center gap-2 rounded-full bg-gray-100 p-1.5 sm:p-2 hover:bg-gray-200 transition ${editMode ? "absolute top-3 sm:top-4 left-3 sm:left-4 p-1" : ""}`}
 								title="Go back"
 							>
-								<svg className="h-5 w-5 text-[#111b21]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<svg className="h-4 sm:h-5 w-4 sm:w-5 text-[#111b21]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
 								</svg>
 							</button>
 
-							<div className={`mb-8 flex items-start gap-6 ${editMode ? "items-center gap-3 mt-6" : ""}`}>
+							<div className={`mb-6 sm:mb-8 flex flex-col sm:flex-row items-start sm:items-start gap-3 sm:gap-6 ${editMode ? "items-center gap-3 mt-6" : ""}`}>
 								<Avatar
 									name={profile?.name}
 									src={profile?.profilePic}
-									size={editMode ? 80 : 120}
+									size={editMode ? 64 : 100}
 									online={isOnline(profile?.lastSeenAt)}
 								/>
-								<div className={editMode ? "flex-1 flex flex-col justify-center" : "flex-1"}>
-									<h1 className={`font-bold text-[#111b21] ${editMode ? "text-lg" : "text-3xl"}`}>{profile?.name || "User"}</h1>
-									<p className={`mt-2 text-sm font-medium text-[#667781] ${editMode ? "hidden" : ""}`}>{getContactDisplay(profile)}</p>
-									{!editMode && <p className="mt-1 text-xs font-medium text-[#00a884]">{getSecurityLabel(profile)}</p>}
+								<div className={editMode ? "flex-1 flex flex-col justify-center w-full" : "flex-1"}>
+									<h1 className={`font-bold text-[#111b21] ${editMode ? "text-base sm:text-lg" : "text-xl sm:text-3xl"}`}>{profile?.name || "User"}</h1>
+									<p className={`mt-1 sm:mt-2 text-xs sm:text-sm font-medium text-[#667781] ${editMode ? "hidden" : ""}`}>{getContactDisplay(profile)}</p>
+									{!editMode && <p className="mt-0.5 sm:mt-1 text-xs font-medium text-[#00a884]">{getSecurityLabel(profile)}</p>}
 									{profile?.about && !editMode && (
-										<p className="mt-3 text-sm text-[#111b21] italic">{profile.about}</p>
+										<p className="mt-2 sm:mt-3 text-xs sm:text-sm text-[#111b21] italic">{profile.about}</p>
 									)}
-									<p className={`${editMode ? "mt-1" : "mt-3"} inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold text-[#00a884] bg-white/40 ${editMode ? "inline-flex" : ""}`}>
+									<p className={`${editMode ? "mt-1" : "mt-2 sm:mt-3"} inline-flex items-center gap-1 rounded-full px-2 sm:px-3 py-0.5 sm:py-1 text-xs font-semibold text-[#00a884] bg-white/40 ${editMode ? "inline-flex" : ""}`}>
 										<span className="inline-block h-2 w-2 rounded-full bg-[#00a884]" />
 										{isOnline(profile?.lastSeenAt)
 											? "Online now"
@@ -280,37 +280,37 @@ export default function ProfilePage() {
 
 									{/* Social Media Links */}
 									{!editMode && (
-										<div className="mt-4 flex gap-2">
+										<div className="mt-3 sm:mt-4 flex gap-1 sm:gap-2 flex-wrap">
 											{profile?.instagram && (
-												<a href={`https://instagram.com/${profile.instagram}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 rounded-full bg-[#f0f2f5] px-3 py-1.5 text-pink-600 hover:bg-pink-50 transition" title="Instagram">
-													<svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+												<a href={`https://instagram.com/${profile.instagram}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 sm:gap-1.5 rounded-full bg-[#f0f2f5] px-2 sm:px-3 py-1 sm:py-1.5 text-pink-600 hover:bg-pink-50 transition" title="Instagram">
+													<svg className="h-3 sm:h-4 w-3 sm:w-4" fill="currentColor" viewBox="0 0 24 24">
 														<path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zM5.838 12a6.162 6.162 0 1 1 12.324 0 6.162 6.162 0 0 1-12.324 0zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm4.965-10.322a1.44 1.44 0 1 1 2.881.001 1.44 1.44 0 0 1-2.881-.001z" />
 													</svg>
-													<span className="text-xs font-semibold">Instagram</span>
+													<span className="text-xs font-semibold hidden sm:inline">Instagram</span>
 												</a>
 											)}
 											{profile?.facebook && (
-												<a href={`https://facebook.com/${profile.facebook}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 rounded-full bg-[#f0f2f5] px-3 py-1.5 text-blue-600 hover:bg-blue-50 transition" title="Facebook">
-													<svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+												<a href={`https://facebook.com/${profile.facebook}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 sm:gap-1.5 rounded-full bg-[#f0f2f5] px-2 sm:px-3 py-1 sm:py-1.5 text-blue-600 hover:bg-blue-50 transition" title="Facebook">
+													<svg className="h-3 sm:h-4 w-3 sm:w-4" fill="currentColor" viewBox="0 0 24 24">
 														<path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
 													</svg>
-													<span className="text-xs font-semibold">Facebook</span>
+													<span className="text-xs font-semibold hidden sm:inline">Facebook</span>
 												</a>
 											)}
 											{profile?.github && (
-												<a href={`https://github.com/${profile.github}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 rounded-full bg-[#f0f2f5] px-3 py-1.5 text-gray-800 hover:bg-gray-100 transition" title="GitHub">
-													<svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+												<a href={`https://github.com/${profile.github}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 sm:gap-1.5 rounded-full bg-[#f0f2f5] px-2 sm:px-3 py-1 sm:py-1.5 text-gray-800 hover:bg-gray-100 transition" title="GitHub">
+													<svg className="h-3 sm:h-4 w-3 sm:w-4" fill="currentColor" viewBox="0 0 24 24">
 														<path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
 													</svg>
-													<span className="text-xs font-semibold">GitHub</span>
+													<span className="text-xs font-semibold hidden sm:inline">GitHub</span>
 												</a>
 											)}
 											{profile?.linkedin && (
-												<a href={`https://linkedin.com/in/${profile.linkedin}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 rounded-full bg-[#f0f2f5] px-3 py-1.5 text-blue-500 hover:bg-blue-50 transition" title="LinkedIn">
-													<svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+												<a href={`https://linkedin.com/in/${profile.linkedin}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 sm:gap-1.5 rounded-full bg-[#f0f2f5] px-2 sm:px-3 py-1 sm:py-1.5 text-blue-500 hover:bg-blue-50 transition" title="LinkedIn">
+													<svg className="h-3 sm:h-4 w-3 sm:w-4" fill="currentColor" viewBox="0 0 24 24">
 														<path d="M20.447 20.452h-3.554v-5.569c0-1.328-.475-2.236-1.986-2.236-1.081 0-1.722.722-2.004 1.418-.103.249-.129.597-.129.946v5.441h-3.554s.05-8.814 0-9.737h3.554v1.378c.43-.664 1.199-1.608 2.925-1.608 2.136 0 3.74 1.393 3.74 4.386v5.581zM5.337 8.855c-1.144 0-1.915-.761-1.915-1.715 0-.955.77-1.715 1.958-1.715 1.188 0 1.915.76 1.932 1.715 0 .954-.744 1.715-1.975 1.715zm1.946 11.597H3.392V9.167h3.891v11.285zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.225 0z" />
 													</svg>
-													<span className="text-xs font-semibold">LinkedIn</span>
+													<span className="text-xs font-semibold hidden sm:inline">LinkedIn</span>
 												</a>
 											)}
 										</div>
@@ -318,21 +318,21 @@ export default function ProfilePage() {
 								</div>
 							</div>
 
-							{!editMode && <hr className="my-8 border-gray-200" />}
+							{!editMode && <hr className="my-6 sm:my-8 border-gray-200" />}
 
 							{!editMode && (
-								<div className="flex gap-3">
+								<div className="flex gap-2 sm:gap-3">
 									<button
 										type="button"
 										onClick={() => setEditMode(true)}
-										className="flex-1 rounded-xl bg-[#00a884] px-6 py-3 font-bold text-white hover:bg-[#008f72] transition shadow-lg hover:shadow-xl"
+										className="flex-1 rounded-lg sm:rounded-xl bg-[#00a884] px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm font-bold text-white hover:bg-[#008f72] transition shadow-lg hover:shadow-xl"
 									>
 										Edit Profile
 									</button>
 									<button
 										type="button"
 										onClick={handleLogout}
-										className="flex-1 rounded-xl bg-red-500 px-6 py-3 font-bold text-white hover:bg-red-600 transition shadow-lg hover:shadow-xl"
+										className="flex-1 rounded-lg sm:rounded-xl bg-red-500 px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm font-bold text-white hover:bg-red-600 transition shadow-lg hover:shadow-xl"
 									>
 										Logout
 									</button>

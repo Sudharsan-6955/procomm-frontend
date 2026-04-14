@@ -441,22 +441,22 @@ export default function LoginPage() {
 				: "text-[#111b21]/80";
 
 	return (
-		<main className="flex min-h-screen flex-col items-center bg-[#FCF5EB] px-6 py-10 text-black sm:px-10 lg:px-32">
-			<section className="w-full max-w-6xl rounded-4xl border border-black bg-[#ffffff] px-6 py-12 sm:px-10 sm:py-14">
+		<main className="flex min-h-screen flex-col items-center bg-[#FCF5EB] px-3 py-6 text-black sm:px-6 sm:py-10 lg:px-32">
+			<section className="w-full max-w-6xl rounded-2xl sm:rounded-4xl border border-black bg-[#ffffff] px-4 py-8 sm:px-10 sm:py-14">
 				<div className="mx-auto w-full max-w-xl text-center">
 					{step === "method" && (
 						<>
-							<h1 className="text-4xl tracking-tight">Login to Procomm Web</h1>
-							<p className="mt-3 text-sm text-[#111b21]/90">Choose how you want to log in</p>
+							<h1 className="text-2xl sm:text-4xl font-bold tracking-tight">Login to Procomm Web</h1>
+							<p className="mt-2 sm:mt-3 text-xs sm:text-sm text-[#111b21]/90">Choose how you want to log in</p>
 
-							<div className="mt-9 flex flex-col space-y-3">
+							<div className="mt-6 sm:mt-9 flex flex-col space-y-2 sm:space-y-3">
 								<button
 									type="button"
 									onClick={() => {
 										setStep("quick");
 										setStatusMessage("", "");
 									}}
-									className="mx-auto inline-flex h-12 w-full max-w-md items-center justify-center rounded-full bg-[#25d366] px-7 text-lg font-medium text-[#111b21] transition hover:bg-[#20bf5d]"
+									className="mx-auto inline-flex h-10 sm:h-12 w-full max-w-md items-center justify-center rounded-full bg-[#25d366] px-5 sm:px-7 text-sm sm:text-lg font-medium text-[#111b21] transition hover:bg-[#20bf5d]"
 								>
 									Quick Test Login
 								</button>
@@ -466,7 +466,7 @@ export default function LoginPage() {
 										setStep("phone");
 										setStatusMessage("", "");
 									}}
-									className="mx-auto inline-flex h-12 w-full max-w-md items-center justify-center rounded-full border-2 border-[#25d366] bg-white px-7 text-lg font-medium text-[#111b21] transition hover:bg-[#f0f2f5]"
+									className="mx-auto inline-flex h-10 sm:h-12 w-full max-w-md items-center justify-center rounded-full border-2 border-[#25d366] bg-white px-5 sm:px-7 text-sm sm:text-lg font-medium text-[#111b21] transition hover:bg-[#f0f2f5]"
 								>
 									Phone with OTP
 								</button>
@@ -476,7 +476,7 @@ export default function LoginPage() {
 										setStep("email");
 										setStatusMessage("", "");
 									}}
-									className="mx-auto inline-flex h-12 w-full max-w-md items-center justify-center rounded-full border-2 border-[#111b21] bg-white px-7 text-lg font-medium text-[#111b21] transition hover:bg-[#f0f2f5]"
+									className="mx-auto inline-flex h-10 sm:h-12 w-full max-w-md items-center justify-center rounded-full border-2 border-[#111b21] bg-white px-5 sm:px-7 text-sm sm:text-lg font-medium text-[#111b21] transition hover:bg-[#f0f2f5]"
 								>
 									Email with OTP
 								</button>
@@ -484,7 +484,7 @@ export default function LoginPage() {
 									type="button"
 									onClick={handleGoogleLogin}
 									disabled={isContinuing}
-									className="mx-auto inline-flex h-12 w-full max-w-md items-center justify-center rounded-full border border-black/20 bg-white px-7 text-lg font-medium text-[#111b21] transition hover:bg-[#f0f2f5] disabled:cursor-not-allowed disabled:opacity-70"
+									className="mx-auto inline-flex h-10 sm:h-12 w-full max-w-md items-center justify-center rounded-full border border-black/20 bg-white px-5 sm:px-7 text-sm sm:text-lg font-medium text-[#111b21] transition hover:bg-[#f0f2f5] disabled:cursor-not-allowed disabled:opacity-70"
 								>
 									{isContinuing ? "Please wait..." : "Continue with Google"}
 								</button>
@@ -494,44 +494,44 @@ export default function LoginPage() {
 
 					{step === "email" && (
 						<>
-							<h1 className="text-4xl tracking-tight">Email login with OTP</h1>
-							<p className="mt-3 text-sm text-[#111b21]/90">Enter your email and we will send a 6-digit code.</p>
+							<h1 className="text-2xl sm:text-4xl font-bold tracking-tight">Email login with OTP</h1>
+							<p className="mt-2 sm:mt-3 text-xs sm:text-sm text-[#111b21]/90">Enter your email and we will send a 6-digit code.</p>
 
-							<div className="mx-auto mt-9 w-full max-w-md space-y-4 text-left">
+							<div className="mx-auto mt-6 sm:mt-9 w-full max-w-md space-y-3 sm:space-y-4 text-left">
 								<div>
-									<label className="mb-2 block text-sm font-semibold text-[#111b21]">Email</label>
+									<label className="mb-1 sm:mb-2 block text-xs sm:text-sm font-semibold text-[#111b21]">Email</label>
 									<input
 										value={email}
 										onChange={(event) => setEmail(event.target.value)}
 										placeholder="name@example.com"
 										type="email"
-										className="h-14 w-full rounded-2xl border border-black/45 bg-[#ffffff] px-5 text-lg outline-none focus:border-[#25d366]"
+										className="h-11 sm:h-14 w-full rounded-2xl border border-black/45 bg-[#ffffff] px-4 sm:px-5 text-sm sm:text-lg outline-none focus:border-[#25d366]"
 									/>
 								</div>
 								<div>
-									<label className="mb-2 block text-sm font-semibold text-[#111b21]">Name (optional)</label>
+									<label className="mb-1 sm:mb-2 block text-xs sm:text-sm font-semibold text-[#111b21]">Name (optional)</label>
 									<input
 										value={emailName}
 										onChange={(event) => setEmailName(event.target.value)}
 										placeholder="Your name"
-										className="h-14 w-full rounded-2xl border border-black/45 bg-[#ffffff] px-5 text-lg outline-none focus:border-[#25d366]"
+										className="h-11 sm:h-14 w-full rounded-2xl border border-black/45 bg-[#ffffff] px-4 sm:px-5 text-sm sm:text-lg outline-none focus:border-[#25d366]"
 									/>
 								</div>
 							</div>
 
-							<div className="mt-10 flex flex-col gap-3">
+							<div className="mt-8 sm:mt-10 flex flex-col gap-2 sm:gap-3">
 								<button
 									type="button"
 									onClick={handleSendEmailOtp}
 									disabled={!emailValid || isSendingEmailOtp}
-									className="mx-auto inline-flex h-12 items-center justify-center rounded-full bg-[#25d366] px-8 text-lg font-medium text-[#111b21] transition hover:bg-[#20bf5d] disabled:cursor-not-allowed disabled:bg-[#98e7bb]"
+									className="mx-auto inline-flex h-10 sm:h-12 items-center justify-center rounded-full bg-[#25d366] px-6 sm:px-8 text-sm sm:text-lg font-medium text-[#111b21] transition hover:bg-[#20bf5d] disabled:cursor-not-allowed disabled:bg-[#98e7bb]"
 								>
 									{isSendingEmailOtp ? "Sending OTP..." : "Send OTP"}
 								</button>
 								<button
 									type="button"
 									onClick={() => setStep("method")}
-									className="mx-auto text-[1rem] text-[#111b21]/80 underline underline-offset-4"
+									className="mx-auto text-xs sm:text-base text-[#111b21]/80 underline underline-offset-4"
 								>
 									Back
 								</button>
@@ -541,10 +541,10 @@ export default function LoginPage() {
 
 					{step === "emailOtp" && (
 						<>
-							<h1 className="text-4xl tracking-tight">Enter email verification code</h1>
-							<p className="mt-3 text-sm text-[#111b21]/90">Code sent to {email.trim().toLowerCase()}</p>
+							<h1 className="text-2xl sm:text-4xl font-bold tracking-tight">Enter email verification code</h1>
+							<p className="mt-2 sm:mt-3 text-xs sm:text-sm text-[#111b21]/90">Code sent to {email.trim().toLowerCase()}</p>
 
-							<div className="mt-8 flex justify-center gap-2 sm:gap-3">
+							<div className="mt-6 sm:mt-8 flex justify-center gap-1 sm:gap-3">
 								{emailOtp.map((digit, index) => (
 									<input
 										key={index}
@@ -558,7 +558,7 @@ export default function LoginPage() {
 										inputMode="numeric"
 										autoComplete={index === 0 ? "one-time-code" : "off"}
 										maxLength={1}
-										className="h-14 w-12 rounded-2xl border border-black/40 bg-[#f0f2f5] text-center text-3xl outline-none focus:border-[#25d366] sm:h-16 sm:w-14"
+										className="h-11 w-9 sm:h-16 sm:w-14 rounded-2xl border border-black/40 bg-[#f0f2f5] text-center text-2xl sm:text-3xl outline-none focus:border-[#25d366]"
 									/>
 								))}
 							</div>
@@ -567,16 +567,16 @@ export default function LoginPage() {
 								type="button"
 								onClick={handleVerifyEmailOtp}
 								disabled={!emailOtpValid || isVerifyingEmailOtp}
-								className="mx-auto mt-10 inline-flex h-12 items-center justify-center rounded-full bg-[#25d366] px-8 text-lg font-medium text-[#111b21] transition hover:bg-[#20bf5d] disabled:cursor-not-allowed disabled:bg-[#98e7bb]"
+								className="mx-auto mt-8 sm:mt-10 inline-flex h-10 sm:h-12 items-center justify-center rounded-full bg-[#25d366] px-6 sm:px-8 text-sm sm:text-lg font-medium text-[#111b21] transition hover:bg-[#20bf5d] disabled:cursor-not-allowed disabled:bg-[#98e7bb]"
 							>
 								{isVerifyingEmailOtp ? "Verifying..." : "Verify"}
 							</button>
 
-							<div className="mt-6 flex justify-center gap-6">
+							<div className="mt-4 sm:mt-6 flex justify-center gap-4 sm:gap-6 flex-wrap">
 								<button
 									type="button"
 									onClick={handleEditEmail}
-									className="text-[1rem] text-[#111b21]/80 underline underline-offset-4"
+									className="text-xs sm:text-base text-[#111b21]/80 underline underline-offset-4"
 								>
 									Edit email
 								</button>
@@ -584,7 +584,7 @@ export default function LoginPage() {
 									type="button"
 									onClick={handleSendEmailOtp}
 									disabled={isSendingEmailOtp || isVerifyingEmailOtp}
-									className="text-[1rem] text-[#111b21]/80 underline underline-offset-4"
+									className="text-xs sm:text-base text-[#111b21]/80 underline underline-offset-4"
 								>
 									{isSendingEmailOtp ? "Resending..." : "Resend code"}
 								</button>
@@ -594,37 +594,37 @@ export default function LoginPage() {
 
 					{step === "quick" && (
 						<>
-							<h1 className="text-4xl tracking-tight">Test Login</h1>
-							<p className="mt-3 text-sm text-[#111b21]/90">Use a test phone number</p>
+							<h1 className="text-2xl sm:text-4xl font-bold tracking-tight">Test Login</h1>
+							<p className="mt-2 sm:mt-3 text-xs sm:text-sm text-[#111b21]/90">Use a test phone number</p>
 
-							<div className="mt-9 space-y-4 text-left">
+							<div className="mt-6 sm:mt-9 space-y-3 sm:space-y-4 text-left">
 								<div className="mx-auto w-full max-w-md">
-									<label className="mb-2 block text-sm font-semibold text-[#111b21]">Phone Number</label>
+									<label className="mb-1 sm:mb-2 block text-xs sm:text-sm font-semibold text-[#111b21]">Phone Number</label>
 									<input
 										value={quickPhone}
 										onChange={(event) => setQuickPhone(event.target.value)}
 										placeholder="+10000000001"
-										className="h-14 w-full rounded-2xl border border-black/45 bg-[#ffffff] px-5 text-2xl outline-none focus:border-[#25d366]"
+										className="h-11 sm:h-14 w-full rounded-2xl border border-black/45 bg-[#ffffff] px-4 sm:px-5 text-lg sm:text-2xl outline-none focus:border-[#25d366]"
 									/>
-									<p className="mt-2 text-xs text-[#111b21]/65">
+									<p className="mt-1 sm:mt-2 text-xs text-[#111b21]/65">
 										Try: <strong>+10000000001</strong> (Ava) or <strong>+10000000002</strong> (Jordan)
 									</p>
 								</div>
 							</div>
 
-							<div className="mt-10 flex flex-col gap-3">
+							<div className="mt-8 sm:mt-10 flex flex-col gap-2 sm:gap-3">
 								<button
 									type="button"
 									onClick={handleQuickLogin}
 									disabled={isContinuing}
-									className="mx-auto inline-flex h-12 items-center justify-center rounded-full bg-[#25d366] px-8 text-lg font-medium text-[#111b21] transition hover:bg-[#20bf5d] disabled:cursor-not-allowed disabled:bg-[#98e7bb]"
+									className="mx-auto inline-flex h-10 sm:h-12 items-center justify-center rounded-full bg-[#25d366] px-6 sm:px-8 text-sm sm:text-lg font-medium text-[#111b21] transition hover:bg-[#20bf5d] disabled:cursor-not-allowed disabled:bg-[#98e7bb]"
 								>
 									{isContinuing ? "Logging in..." : "Login"}
 								</button>
 								<button
 									type="button"
 									onClick={() => setStep("method")}
-									className="mx-auto text-[1rem] text-[#111b21]/80 underline underline-offset-4"
+									className="mx-auto text-xs sm:text-base text-[#111b21]/80 underline underline-offset-4"
 								>
 									Back
 								</button>
@@ -634,23 +634,23 @@ export default function LoginPage() {
 
 					{step === "phone" && (
 						<>
-							<h1 className="text-4xl tracking-tight">Enter phone number</h1>
-							<p className="mt-3 text-sm text-[#111b21]/90">Select a country and enter your phone number.</p>
+							<h1 className="text-2xl sm:text-4xl font-bold tracking-tight">Enter phone number</h1>
+							<p className="mt-2 sm:mt-3 text-xs sm:text-sm text-[#111b21]/90">Select a country and enter your phone number.</p>
 
-							<div className="mt-9 space-y-4 text-left">
+							<div className="mt-6 sm:mt-9 space-y-3 sm:space-y-4 text-left">
 								<div className="mx-auto w-full max-w-md">
 									<CountryPicker value={countryCode} onChange={setCountryCode} />
 								</div>
 
-								<div className="mx-auto flex h-14 w-full max-w-md items-center rounded-4xl border border-black/45 bg-[#ffffff] px-5">
-									<span className="mr-3 text-2xl text-[#111b21]">{selectedDialCode}</span>
+								<div className="mx-auto flex h-11 sm:h-14 w-full max-w-md items-center rounded-4xl border border-black/45 bg-[#ffffff] px-4 sm:px-5">
+									<span className="mr-2 sm:mr-3 text-lg sm:text-2xl text-[#111b21]">{selectedDialCode}</span>
 									<input
 										id="phone"
 										value={phone}
 										onChange={(event) => setPhone(event.target.value.replace(/\D/g, "").slice(0, 12))}
 										placeholder="9876.."
 										inputMode="numeric"
-										className="w-full bg-transparent text-2xl outline-none placeholder:text-[#111b21]/45"
+										className="w-full bg-transparent text-lg sm:text-2xl outline-none placeholder:text-[#111b21]/45"
 									/>
 								</div>
 							</div>
@@ -660,7 +660,7 @@ export default function LoginPage() {
 									type="button"
 									onClick={handleContinue}
 									disabled={!phoneValid || isContinuing || isVerifying || isResending}
-									className="mx-auto mt-10 inline-flex h-12 items-center justify-center rounded-full bg-[#37C572] px-7 text-lg font-medium text-[#111b21] transition hover:bg-[#37C572] disabled:cursor-not-allowed disabled:bg-[#98e7bb]"
+									className="mx-auto mt-8 sm:mt-10 inline-flex h-10 sm:h-12 items-center justify-center rounded-full bg-[#37C572] px-5 sm:px-7 text-sm sm:text-lg font-medium text-[#111b21] transition hover:bg-[#37C572] disabled:cursor-not-allowed disabled:bg-[#98e7bb]"
 								>
 									{isContinuing ? "Sending OTP..." : "Continue"}
 								</button>
@@ -670,10 +670,10 @@ export default function LoginPage() {
 
 					{step === "otp" && (
 						<>
-							<h1 className="text-4xl tracking-tight">Enter verification code</h1>
-							<p className="mt-3 text-sm text-[#111b21]/90">Code sent to {fullPhoneNumber}</p>
+							<h1 className="text-2xl sm:text-4xl font-bold tracking-tight">Enter verification code</h1>
+							<p className="mt-2 sm:mt-3 text-xs sm:text-sm text-[#111b21]/90">Code sent to {fullPhoneNumber}</p>
 
-							<div className="mt-8 flex justify-center gap-2 sm:gap-3">
+							<div className="mt-6 sm:mt-8 flex justify-center gap-1 sm:gap-3">
 								{otp.map((digit, index) => (
 									<input
 										key={index}
@@ -688,7 +688,7 @@ export default function LoginPage() {
 										inputMode="numeric"
 										autoComplete={index === 0 ? "one-time-code" : "off"}
 										maxLength={1}
-										className="h-14 w-12 rounded-2xl border border-black/40 bg-[#f0f2f5] text-center text-3xl outline-none focus:border-[#25d366] sm:h-16 sm:w-14"
+										className="h-11 w-9 sm:h-16 sm:w-14 rounded-2xl border border-black/40 bg-[#f0f2f5] text-center text-2xl sm:text-3xl outline-none focus:border-[#25d366]"
 									/>
 								))}
 							</div>
@@ -697,16 +697,16 @@ export default function LoginPage() {
 								type="button"
 								onClick={handleVerify}
 								disabled={!otpValid || isVerifying}
-								className="mx-auto mt-10 inline-flex h-12 items-center justify-center rounded-full bg-[#25d366] px-8 text-lg font-medium text-[#111b21] transition hover:bg-[#20bf5d] disabled:cursor-not-allowed disabled:bg-[#98e7bb]"
+								className="mx-auto mt-8 sm:mt-10 inline-flex h-10 sm:h-12 items-center justify-center rounded-full bg-[#25d366] px-6 sm:px-8 text-sm sm:text-lg font-medium text-[#111b21] transition hover:bg-[#20bf5d] disabled:cursor-not-allowed disabled:bg-[#98e7bb]"
 							>
 								{isVerifying ? "Verifying..." : "Verify"}
 							</button>
 
-							<div className="mt-6 flex justify-center gap-6">
+							<div className="mt-4 sm:mt-6 flex justify-center gap-4 sm:gap-6 flex-wrap">
 								<button
 									type="button"
 									onClick={handleEditNumber}
-									className="text-[1rem] text-[#111b21]/80 underline underline-offset-4"
+									className="text-xs sm:text-base text-[#111b21]/80 underline underline-offset-4"
 								>
 									Edit number
 								</button>
@@ -714,7 +714,7 @@ export default function LoginPage() {
 									type="button"
 									onClick={handleResend}
 									disabled={isResending || isVerifying || isContinuing}
-									className="text-[1rem] text-[#111b21]/80 underline underline-offset-4"
+									className="text-xs sm:text-base text-[#111b21]/80 underline underline-offset-4"
 								>
 									{isResending ? "Resending..." : "Resend code"}
 								</button>
@@ -722,7 +722,7 @@ export default function LoginPage() {
 						</>
 					)}
 
-					{status.message ? <p className={`mt-4 text-sm ${statusTextClassName}`}>{status.message}</p> : null}
+					{status.message ? <p className={`mt-4 text-xs sm:text-sm ${statusTextClassName}`}>{status.message}</p> : null}
 					<div id="recaptcha-container" />
 				</div>
 			</section>
