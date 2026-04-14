@@ -8,6 +8,7 @@ import { usePushNotifications } from "@/hooks/usePushNotifications";
 
 export default function PushProvider({ children }) {
 	const [sessionToken, setSessionToken] = useState(() => getSessionToken());
+	const [activeChatFromEvent, setActiveChatFromEvent] = useState(null);
 	const pathname = usePathname();
 	const searchParams = useSearchParams();
 	const { data: me } = useCurrentUser({
@@ -16,7 +17,7 @@ export default function PushProvider({ children }) {
 		queryKey: ["me", sessionToken],
 	});
 
-	const activeChatId = useMemo(() => {
+	const routeActiveChatId = useMemo(() => {
 		const route = String(pathname || "");
 		if (route.startsWith("/chat/")) {
 			const routeChatId = route.split("/")[2] || "";
@@ -31,9 +32,17 @@ export default function PushProvider({ children }) {
 		return null;
 	}, [pathname, searchParams]);
 
+	const isChatRoute = String(pathname || "").startsWith("/chat");
+	const activeChatId = routeActiveChatId || (isChatRoute ? activeChatFromEvent : null);
+
 	usePushNotifications(me?._id || null, activeChatId);
 
 	useEffect(() => {
+		const handleActiveChatChange = (event) => {
+			const nextChatId = String(event?.detail?.chatId || "");
+			setActiveChatFromEvent(nextChatId || null);
+		};
+
 		const syncSession = () => {
 			setSessionToken(getSessionToken());
 		};
@@ -41,12 +50,20 @@ export default function PushProvider({ children }) {
 		syncSession();
 		window.addEventListener("storage", syncSession);
 		window.addEventListener("procomm-session-change", syncSession);
+		window.addEventListener("procomm-active-chat-change", handleActiveChatChange);
 
 		return () => {
 			window.removeEventListener("storage", syncSession);
 			window.removeEventListener("procomm-session-change", syncSession);
+			window.removeEventListener("procomm-active-chat-change", handleActiveChatChange);
 		};
 	}, []);
+
+	useEffect(() => {
+		if (!isChatRoute && activeChatFromEvent) {
+			setActiveChatFromEvent(null);
+		}
+	}, [isChatRoute, activeChatFromEvent]);
 
 	return children;
 }

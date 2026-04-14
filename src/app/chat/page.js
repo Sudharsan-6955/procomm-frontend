@@ -23,6 +23,7 @@ function ChatPageContent() {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const initialChatId = searchParams.get("chatId");
+	const urlChatId = searchParams.get("chatId");
 	const [selectedChatId, setSelectedChatId] = useState(initialChatId);
 	const [selectedChatInitialUnreadCount, setSelectedChatInitialUnreadCount] = useState(0);
 	const [mobileView, setMobileView] = useState(initialChatId ? "chat" : "list");
@@ -39,6 +40,30 @@ function ChatPageContent() {
 			router.push("/auth/login");
 		}
 	}, [isLoadingMe, router]);
+
+	useEffect(() => {
+		const normalizedUrlChatId = String(urlChatId || "");
+		const normalizedSelectedChatId = String(selectedChatId || "");
+		if (normalizedUrlChatId === normalizedSelectedChatId) {
+			return;
+		}
+
+		setSelectedChatId(normalizedUrlChatId || null);
+		setMobileView(normalizedUrlChatId ? "chat" : "list");
+	}, [urlChatId, selectedChatId]);
+
+	useEffect(() => {
+		if (typeof window === "undefined") {
+			return;
+		}
+
+		const chatId = String(selectedChatId || "");
+		window.dispatchEvent(
+			new CustomEvent("procomm-active-chat-change", {
+				detail: { chatId },
+			})
+		);
+	}, [selectedChatId]);
 
 	useEffect(() => {
 		if (!selectedChatId || isChatsLoading) {
@@ -62,10 +87,12 @@ function ChatPageContent() {
 		setSelectedChatInitialUnreadCount(liveUnread || fallbackUnread || 0);
 		setSelectedChatId(chatId);
 		setMobileView("chat");
+		router.replace(`/chat?chatId=${encodeURIComponent(chatKey)}`);
 	};
 
 	const handleBackToList = () => {
 		setMobileView("list");
+		router.replace("/chat");
 	};
 
 	const handleStartChat = async (queryText) => {
@@ -85,6 +112,7 @@ function ChatPageContent() {
 			setSelectedChatInitialUnreadCount(0);
 			setSelectedChatId(String(direct._id));
 			setMobileView("chat");
+			router.replace(`/chat?chatId=${encodeURIComponent(String(direct._id))}`);
 		}
 	};
 
@@ -100,6 +128,7 @@ function ChatPageContent() {
 			setSelectedChatInitialUnreadCount(0);
 			setSelectedChatId(String(direct._id));
 			setMobileView("chat");
+			router.replace(`/chat?chatId=${encodeURIComponent(String(direct._id))}`);
 		}
 	};
 

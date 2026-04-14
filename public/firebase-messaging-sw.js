@@ -13,12 +13,43 @@ firebase.initializeApp({
 const messaging = firebase.messaging();
 let lastBackgroundMessageId = "";
 
-messaging.onBackgroundMessage((payload) => {
-	const messageId = String(payload?.data?.messageId || payload?.messageId || "");
-	if (messageId && messageId === lastBackgroundMessageId) {
-		return;
+function extractChatIdFromClientUrl(urlString) {
+	try {
+		const url = new URL(urlString);
+		const byQuery = String(url.searchParams.get("chatId") || "");
+		if (byQuery) {
+			return byQuery;
+		}
+
+		const path = String(url.pathname || "");
+		if (path.startsWith("/chat/")) {
+			return String(path.split("/")[2] || "");
+		}
+
+		return "";
+	} catch {
+		return "";
+	}
+}
+
+function shouldSkipDuplicate(messageId) {
+	if (!messageId) {
+		return false;
+	}
+	if (messageId === lastBackgroundMessageId) {
+		return true;
 	}
 	lastBackgroundMessageId = messageId;
+	return false;
+}
+
+function showNotificationFromPayload(payload) {
+	const messageId = String(payload?.data?.messageId || payload?.messageId || "");
+	if (shouldSkipDuplicate(messageId)) {
+		return Promise.resolve();
+	}
+
+	const incomingChatId = String(payload?.data?.chatId || "");
 
 	const notificationTitle = payload?.notification?.title || payload?.data?.title || "ProComm";
 	const notificationOptions = {
@@ -32,7 +63,55 @@ messaging.onBackgroundMessage((payload) => {
 		},
 	};
 
-	self.registration.showNotification(notificationTitle, notificationOptions);
+	return clients
+		.matchAll({ type: "window", includeUncontrolled: true })
+		.then((windowClients) => {
+			const hasVisibleSameChatClient = windowClients.some((client) => {
+				const visibilityState = String(client.visibilityState || "").toLowerCase();
+				if (visibilityState !== "visible") {
+					return false;
+				}
+
+				if (!incomingChatId) {
+					return false;
+				}
+
+				const clientChatId = extractChatIdFromClientUrl(client.url);
+				return clientChatId && clientChatId === incomingChatId;
+			});
+
+			if (hasVisibleSameChatClient) {
+				return undefined;
+			}
+
+			return self.registration.showNotification(notificationTitle, notificationOptions);
+		})
+		.catch(() => {
+			return self.registration.showNotification(notificationTitle, notificationOptions);
+		});
+}
+
+messaging.onBackgroundMessage((payload) => {
+	void showNotificationFromPayload(payload);
+});
+
+self.addEventListener("push", (event) => {
+	if (!event?.data) {
+		return;
+	}
+
+	let payload = null;
+	try {
+		payload = event.data.json();
+	} catch {
+		payload = null;
+	}
+
+	if (!payload) {
+		return;
+	}
+
+	event.waitUntil(showNotificationFromPayload(payload));
 });
 
 self.addEventListener("install", () => {

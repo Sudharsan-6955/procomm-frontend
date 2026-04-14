@@ -31,6 +31,11 @@ export function usePushNotifications(userId, activeChatId = null) {
 	const activeUserIdRef = useRef(null);
 	const unsubscribeMessageListenerRef = useRef(null);
 	const lastForegroundMessageKeyRef = useRef("");
+	const activeChatIdRef = useRef("");
+
+	useEffect(() => {
+		activeChatIdRef.current = String(activeChatId || "");
+	}, [activeChatId]);
 
 	useEffect(() => {
 		if (!userId || typeof window === "undefined" || typeof Notification === "undefined") {
@@ -38,7 +43,6 @@ export function usePushNotifications(userId, activeChatId = null) {
 		}
 
 		let isCancelled = false;
-		const normalizedActiveChatId = String(activeChatId || "");
 
 		const setupPush = async () => {
 			try {
@@ -70,15 +74,31 @@ export function usePushNotifications(userId, activeChatId = null) {
 
 				const registration = await navigator.serviceWorker.register("/firebase-messaging-sw.js");
 				const token = await getToken(messaging, { vapidKey, serviceWorkerRegistration: registration });
-				if (!token) {
-					return;
-				}
 
-				if (token !== currentTokenRef.current) {
-					await registerPushToken(token);
-					savePushToken(token);
-					currentTokenRef.current = token;
-					console.info("Push token registered for user:", String(userId));
+				const syncTokenWithRetry = async (nextToken, retriesLeft = 2) => {
+					try {
+						await registerPushToken(nextToken);
+						savePushToken(nextToken);
+						currentTokenRef.current = nextToken;
+						console.info("Push token registered for user:", String(userId));
+					} catch (registerError) {
+						console.warn("Push token register failed:", registerError?.message || registerError);
+						if (retriesLeft > 0 && !isCancelled) {
+							setTimeout(() => {
+								if (!isCancelled && currentTokenRef.current !== nextToken) {
+									void syncTokenWithRetry(nextToken, retriesLeft - 1);
+								}
+							}, 4000);
+						}
+					}
+				};
+
+				if (!token) {
+					console.warn("Push token unavailable");
+				} else {
+					if (token !== currentTokenRef.current) {
+						void syncTokenWithRetry(token, 2);
+					}
 				}
 
 				if (isCancelled) {
@@ -92,7 +112,8 @@ export function usePushNotifications(userId, activeChatId = null) {
 
 				unsubscribeMessageListenerRef.current = onMessage(messaging, (payload) => {
 					const incomingChatId = extractChatIdFromPushPayload(payload);
-					if (incomingChatId && normalizedActiveChatId && incomingChatId === normalizedActiveChatId) {
+					const currentActiveChatId = activeChatIdRef.current;
+					if (incomingChatId && currentActiveChatId && incomingChatId === currentActiveChatId) {
 						return;
 					}
 
@@ -132,5 +153,5 @@ export function usePushNotifications(userId, activeChatId = null) {
 				unsubscribeMessageListenerRef.current = null;
 			}
 		};
-	}, [userId, activeChatId]);
+	}, [userId]);
 }
