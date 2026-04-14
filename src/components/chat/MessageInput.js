@@ -27,6 +27,10 @@ export default function MessageInput({ onSendMessage, isSending }) {
 	};
 
 	const handleSend = () => {
+		if (isSending) {
+			return;
+		}
+
 		const trimmed = text.trim();
 		if (!trimmed && pendingAttachments.length === 0) {
 			return;
@@ -71,7 +75,7 @@ export default function MessageInput({ onSendMessage, isSending }) {
 					value={text}
 					onChange={(e) => setText(e.target.value)}
 					onKeyDown={(e) => {
-						if (e.key === "Enter") {
+						if (e.key === "Enter" && !e.repeat) {
 							e.preventDefault();
 							handleSend();
 						}

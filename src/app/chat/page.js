@@ -31,7 +31,7 @@ function ChatPageContent() {
 	// User irundha dhaan socket init aagum; illena extra connect avoid pannidum.
 	const socket = useSocket(me?._id, selectedChatId);
 	const { data: chats = [], isLoading: isChatsLoading } = useChats();
-	const unreadByChat = useUnreadCounts(me?._id, chats, selectedChatId);
+	const unreadByChat = useUnreadCounts(me?._id, chats, selectedChatId, socket);
 
 	useEffect(() => {
 		const token = getSessionToken();

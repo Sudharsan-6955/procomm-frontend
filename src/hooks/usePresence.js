@@ -16,11 +16,6 @@ export function usePresence(userId) {
 		if (!socket) {
 			return;
 		}
-		const joinUserRoom = () => {
-			// User room join aagumbodhu presence state varum.
-			socket.emit("join", userId);
-		};
-
 		const handlePresenceState = (event = {}) => {
 			const onlineUserIds = Array.isArray(event.onlineUserIds) ? event.onlineUserIds : [];
 			const onlineSet = new Set(onlineUserIds.map((id) => String(id)));
@@ -63,15 +58,11 @@ export function usePresence(userId) {
 			}));
 		};
 
-		joinUserRoom();
-		// Socket reconnect aana automatic-ah room join repeat aagum.
-		socket.on("connect", joinUserRoom);
 		socket.on("presence:state", handlePresenceState);
 		socket.on("presence:update", handlePresenceUpdate);
 
 		return () => {
 			// Cleanup panna listener duplicate aagadhu.
-			socket.off("connect", joinUserRoom);
 			socket.off("presence:state", handlePresenceState);
 			socket.off("presence:update", handlePresenceUpdate);
 		};

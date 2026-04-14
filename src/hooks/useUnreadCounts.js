@@ -2,13 +2,12 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { useSocket } from "./useSocket";
 
-export function useUnreadCounts(userId, chats = [], activeChatId = null) {
+export function useUnreadCounts(userId, chats = [], activeChatId = null, socket = null) {
 	const [unreadByChat, setUnreadByChat] = useState({});
-	const socket = useSocket(userId, null);
 	const mounted = useRef(false);
 	const activeChatIdRef = useRef(String(activeChatId || ""));
+	const seenMessageIdsRef = useRef(new Set());
 	// TanStack cache la chats list update panna query client use panrom.
 	const queryClient = useQueryClient();
 
@@ -32,13 +31,25 @@ export function useUnreadCounts(userId, chats = [], activeChatId = null) {
 		mounted.current = true;
 	}, [chats]);
 
-	// Listen for message updates via socket
+	// Listen for message updates via shared socket
 	useEffect(() => {
 		if (!socket || !userId) {
 			return;
 		}
 
 		const handleMessageNew = (msg) => {
+			const messageId = String(msg?._id || "");
+			if (messageId) {
+				if (seenMessageIdsRef.current.has(messageId)) {
+					return;
+				}
+				seenMessageIdsRef.current.add(messageId);
+				if (seenMessageIdsRef.current.size > 500) {
+					const ids = Array.from(seenMessageIdsRef.current).slice(-300);
+					seenMessageIdsRef.current = new Set(ids);
+				}
+			}
+
 			const chatId = String(msg.chatId);
 			const senderId = String(msg.senderId);
 			const userIdStr = String(userId);
@@ -73,18 +84,6 @@ export function useUnreadCounts(userId, chats = [], activeChatId = null) {
 					}));
 				}
 
-				const normalizedActiveChatId = activeChatIdRef.current;
-				const shouldNotify =
-					chatId &&
-					normalizedActiveChatId !== chatId &&
-					typeof window !== "undefined" &&
-					typeof Notification !== "undefined" &&
-					Notification.permission === "granted";
-
-				if (shouldNotify) {
-					const title = String(msg?.senderName || "New message");
-					new Notification(title, { body: previewText });
-				}
 			}
 		};
 
