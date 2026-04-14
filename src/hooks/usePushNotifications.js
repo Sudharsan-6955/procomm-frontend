@@ -6,7 +6,27 @@ import { firebaseApp } from "@/lib/firebase";
 import { registerPushToken } from "@/services/api";
 import { savePushToken } from "@/lib/session";
 
-export function usePushNotifications(userId) {
+function extractChatIdFromPushPayload(payload) {
+	const directChatId = payload?.data?.chatId;
+	if (directChatId) {
+		return String(directChatId);
+	}
+
+	const link = payload?.fcmOptions?.link || payload?.data?.link || "";
+	if (!link) {
+		return "";
+	}
+
+	try {
+		const base = typeof window !== "undefined" ? window.location.origin : "http://localhost";
+		const url = new URL(link, base);
+		return String(url.searchParams.get("chatId") || "");
+	} catch {
+		return "";
+	}
+}
+
+export function usePushNotifications(userId, activeChatId = null) {
 	const currentTokenRef = useRef("");
 	const activeUserIdRef = useRef(null);
 
@@ -16,6 +36,7 @@ export function usePushNotifications(userId) {
 		}
 
 		let unsubscribeMessageListener = null;
+		const normalizedActiveChatId = String(activeChatId || "");
 
 		const setupPush = async () => {
 			try {
@@ -59,6 +80,11 @@ export function usePushNotifications(userId) {
 				}
 
 				unsubscribeMessageListener = onMessage(messaging, (payload) => {
+					const incomingChatId = extractChatIdFromPushPayload(payload);
+					if (incomingChatId && normalizedActiveChatId && incomingChatId === normalizedActiveChatId) {
+						return;
+					}
+
 					const title = payload?.notification?.title || "New message";
 					const body = payload?.notification?.body || "You received a new message";
 
@@ -78,5 +104,5 @@ export function usePushNotifications(userId) {
 				unsubscribeMessageListener();
 			}
 		};
-	}, [userId]);
+	}, [userId, activeChatId]);
 }
