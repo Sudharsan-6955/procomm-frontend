@@ -4,12 +4,17 @@ import { useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSocket } from "./useSocket";
 
-export function useUnreadCounts(userId, chats = []) {
+export function useUnreadCounts(userId, chats = [], activeChatId = null) {
 	const [unreadByChat, setUnreadByChat] = useState({});
 	const socket = useSocket(userId, null);
 	const mounted = useRef(false);
+	const activeChatIdRef = useRef(String(activeChatId || ""));
 	// TanStack cache la chats list update panna query client use panrom.
 	const queryClient = useQueryClient();
+
+	useEffect(() => {
+		activeChatIdRef.current = String(activeChatId || "");
+	}, [activeChatId]);
 
 	// Initialize unread counts from chats data (which now includes unreadCount from server)
 	useEffect(() => {
@@ -66,6 +71,19 @@ export function useUnreadCounts(userId, chats = []) {
 						...prev,
 						[chatId]: (prev[chatId] || 0) + 1,
 					}));
+				}
+
+				const normalizedActiveChatId = activeChatIdRef.current;
+				const shouldNotify =
+					chatId &&
+					normalizedActiveChatId !== chatId &&
+					typeof window !== "undefined" &&
+					typeof Notification !== "undefined" &&
+					Notification.permission === "granted";
+
+				if (shouldNotify) {
+					const title = String(msg?.senderName || "New message");
+					new Notification(title, { body: previewText });
 				}
 			}
 		};
