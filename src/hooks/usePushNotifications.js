@@ -29,13 +29,15 @@ function extractChatIdFromPushPayload(payload) {
 export function usePushNotifications(userId, activeChatId = null) {
 	const currentTokenRef = useRef("");
 	const activeUserIdRef = useRef(null);
+	const unsubscribeMessageListenerRef = useRef(null);
+	const lastForegroundMessageKeyRef = useRef("");
 
 	useEffect(() => {
 		if (!userId || typeof window === "undefined" || typeof Notification === "undefined") {
 			return;
 		}
 
-		let unsubscribeMessageListener = null;
+		let isCancelled = false;
 		const normalizedActiveChatId = String(activeChatId || "");
 
 		const setupPush = async () => {
@@ -79,14 +81,38 @@ export function usePushNotifications(userId, activeChatId = null) {
 					console.info("Push token registered for user:", String(userId));
 				}
 
-				unsubscribeMessageListener = onMessage(messaging, (payload) => {
+				if (isCancelled) {
+					return;
+				}
+
+				if (unsubscribeMessageListenerRef.current) {
+					unsubscribeMessageListenerRef.current();
+					unsubscribeMessageListenerRef.current = null;
+				}
+
+				unsubscribeMessageListenerRef.current = onMessage(messaging, (payload) => {
 					const incomingChatId = extractChatIdFromPushPayload(payload);
 					if (incomingChatId && normalizedActiveChatId && incomingChatId === normalizedActiveChatId) {
 						return;
 					}
 
-					const title = payload?.notification?.title || "New message";
-					const body = payload?.notification?.body || "You received a new message";
+					const messageKey = String(
+						payload?.data?.messageId ||
+						payload?.messageId ||
+						`${payload?.notification?.title || ""}|${payload?.notification?.body || ""}|${Date.now()}`
+					);
+					if (lastForegroundMessageKeyRef.current === messageKey) {
+						return;
+					}
+					lastForegroundMessageKeyRef.current = messageKey;
+					setTimeout(() => {
+						if (lastForegroundMessageKeyRef.current === messageKey) {
+							lastForegroundMessageKeyRef.current = "";
+						}
+					}, 4000);
+
+					const title = payload?.notification?.title || payload?.data?.title || "New message";
+					const body = payload?.notification?.body || payload?.data?.body || "You received a new message";
 
 					if (Notification.permission === "granted") {
 						new Notification(title, { body });
@@ -100,8 +126,10 @@ export function usePushNotifications(userId, activeChatId = null) {
 		setupPush();
 
 		return () => {
-			if (unsubscribeMessageListener) {
-				unsubscribeMessageListener();
+			isCancelled = true;
+			if (unsubscribeMessageListenerRef.current) {
+				unsubscribeMessageListenerRef.current();
+				unsubscribeMessageListenerRef.current = null;
 			}
 		};
 	}, [userId, activeChatId]);

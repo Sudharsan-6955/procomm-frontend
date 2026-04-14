@@ -11,15 +11,24 @@ firebase.initializeApp({
 });
 
 const messaging = firebase.messaging();
+let lastBackgroundMessageId = "";
 
 messaging.onBackgroundMessage((payload) => {
-	const notificationTitle = payload?.notification?.title || "ProComm";
+	const messageId = String(payload?.data?.messageId || payload?.messageId || "");
+	if (messageId && messageId === lastBackgroundMessageId) {
+		return;
+	}
+	lastBackgroundMessageId = messageId;
+
+	const notificationTitle = payload?.notification?.title || payload?.data?.title || "ProComm";
 	const notificationOptions = {
-		body: payload?.notification?.body || "New message received",
+		body: payload?.notification?.body || payload?.data?.body || "New message received",
 		icon: "/icons/icon-192x192.png",
 		badge: "/icons/icon-192x192.png",
+		tag: payload?.data?.chatId ? `chat-${String(payload.data.chatId)}` : undefined,
 		data: {
 			link: payload?.data?.link || payload?.fcmOptions?.link || "/chat",
+			messageId,
 		},
 	};
 
