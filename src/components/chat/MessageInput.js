@@ -43,7 +43,10 @@ export default function MessageInput({ onSendMessage, isSending }) {
 	};
 
 	return (
-		<div className="border-t border-black/10 bg-[#f0f2f5] px-3 pb-3 pt-2">
+		<div
+			className="border-t border-black/10 bg-[#f0f2f5]/95 px-2 pb-2 pt-2 backdrop-blur-sm md:px-3 md:pb-3"
+			style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 8px)" }}
+		>
 			{pendingAttachments.length > 0 && (
 				<div className="mb-2 flex flex-wrap gap-2 rounded-xl bg-white px-3 py-2">
 					{pendingAttachments.map((item) => (
@@ -62,7 +65,7 @@ export default function MessageInput({ onSendMessage, isSending }) {
 				</div>
 			)}
 
-			<div className="flex items-center gap-2 rounded-2xl bg-white px-2 py-1 shadow-[0_1px_1px_rgba(11,20,26,0.08)]">
+			<div className="flex items-center gap-1.5 rounded-2xl bg-white px-2 py-1 shadow-[0_1px_1px_rgba(11,20,26,0.08)] md:gap-2">
 				<MessageInputActions onAttachmentPick={handleAttachmentPick} onEmojiPick={handleEmojiPick} />
 				<input
 					value={text}
@@ -73,14 +76,14 @@ export default function MessageInput({ onSendMessage, isSending }) {
 							handleSend();
 						}
 					}}
-					className="h-10 flex-1 bg-transparent px-1 text-sm text-[#111b21] outline-none placeholder:text-[#667781]"
+					className="h-10 min-w-0 flex-1 bg-transparent px-1 text-sm text-[#111b21] outline-none placeholder:text-[#667781]"
 					placeholder="Type a message"
 				/>
 				<button
 					type="button"
 					onClick={handleSend}
 					disabled={isSending}
-					className="rounded-full bg-[#25d366] px-4 py-2 text-sm font-medium text-white transition hover:bg-[#1da955] disabled:opacity-60"
+					className="rounded-full bg-[#25d366] px-3 py-2 text-sm font-medium text-white transition hover:bg-[#1da955] disabled:opacity-60 md:px-4"
 				>
 					Send
 				</button>

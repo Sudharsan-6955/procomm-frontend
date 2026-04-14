@@ -437,9 +437,9 @@ export default function ChatWindow({
 	}
 
 	return (
-		<section className="relative flex h-full min-w-0 flex-1 overflow-hidden">
+		<section className="relative flex h-full min-w-0 flex-1 overflow-hidden overscroll-none">
 			<div className="flex min-w-0 flex-1 flex-col">
-				<header className="flex items-center justify-between border-b border-black/10 bg-[#f0f2f5] px-4 py-3">
+				<header className="flex shrink-0 items-center justify-between border-b border-black/10 bg-[#f0f2f5]/95 px-3 py-2.5 backdrop-blur-sm md:px-4 md:py-3">
 					<div className="flex min-w-0 items-center gap-2">
 						<button
 							type="button"
@@ -530,7 +530,7 @@ export default function ChatWindow({
 
 				<div
 					ref={messageViewportRef}
-					className="chat-messages-scroll min-h-0 flex-1 overflow-y-auto p-4"
+					className="chat-messages-scroll min-h-0 flex-1 overflow-y-auto px-2 pb-3 pt-3 sm:px-3 md:p-4"
 					style={{
 						backgroundColor: "#efeae2",
 						backgroundImage:
@@ -589,7 +589,7 @@ export default function ChatWindow({
 					<button
 						type="button"
 						onClick={handleScrollToBottom}
-						className="absolute bottom-20 right-5 z-20 grid h-11 w-11 place-items-center rounded-full border border-black/10 bg-white text-[#111b21] shadow-lg transition hover:bg-[#f6f7f8]"
+						className="absolute bottom-24 right-3 z-20 grid h-11 w-11 place-items-center rounded-full border border-black/10 bg-white text-[#111b21] shadow-lg transition hover:bg-[#f6f7f8] md:bottom-20 md:right-5"
 						aria-label="Jump to latest message"
 					>
 						<svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -598,7 +598,9 @@ export default function ChatWindow({
 					</button>
 				)}
 
-				<MessageInput onSendMessage={handleSend} isSending={isSending} />
+				<div className="sticky bottom-0 z-10 shrink-0">
+					<MessageInput onSendMessage={handleSend} isSending={isSending} />
+				</div>
 			</div>
 
 			<aside

@@ -163,7 +163,7 @@ function ChatPageContent() {
 	}
 
 	return (
-		<main className="h-screen bg-[#efeae2] text-[#111b21]">
+		<main className="h-dvh overflow-hidden bg-[#efeae2] text-[#111b21] md:h-screen">
 			<div className="mx-auto flex h-full max-w-7xl flex-col overflow-hidden border-x border-black/10 bg-white md:flex-row">
 				<div className={`${mobileView === "chat" ? "hidden" : "flex"} h-full min-w-0 flex-1 md:flex md:w-auto md:flex-none`}>
 					<ChatList
